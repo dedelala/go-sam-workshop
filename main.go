@@ -25,6 +25,20 @@ func words(s string) int {
 	return n
 }
 
+// lines counts the number of lines in s.
+func lines(s string) int {
+	n := 0
+	for _, b := range []byte(s) {
+		if b == '\n' {
+			n++
+		}
+	}
+	if n == 0 {
+		return 1
+	}
+	return n
+}
+
 // respond returns a handler response in a slightly less verbose way.
 func respond(code int, msg string) (events.APIGatewayProxyResponse, error) {
 	return events.APIGatewayProxyResponse{
@@ -34,10 +48,18 @@ func respond(code int, msg string) (events.APIGatewayProxyResponse, error) {
 }
 
 func handler(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	msg := map[string]int{}
+	switch req.Path {
+	case "/lines":
+		msg["lines"] = lines(req.Body)
+	case "/words":
+		msg["words"] = words(req.Body)
+	default:
+		msg["lines"] = lines(req.Body)
+		msg["words"] = words(req.Body)
+	}
+
 	var b bytes.Buffer
-
-	msg := map[string]int{"words": words(req.Body)}
-
 	if err := json.NewEncoder(&b).Encode(msg); err != nil {
 		return respond(http.StatusInternalServerError,
 			`{"error":"failed to encode response"}`)

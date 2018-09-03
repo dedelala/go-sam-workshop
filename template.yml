@@ -20,6 +20,16 @@ Resources:
           Properties:
             Path: /
             Method: POST
+        Lines:
+          Type: Api
+          Properties:
+            Path: /lines
+            Method: POST
+        Words:
+          Type: Api
+          Properties:
+            Path: /words
+            Method: POST
 
   Role:
     Type: AWS::IAM::Role
